@@ -80,12 +80,7 @@ namespace com.gigagoga.rest
                         }
 
                         break;
-                    /*
-                    case "GET-HEAD":
-                    case "GET-OPTIONS":
-                        httpMethod = httpMethodOverride.ToUpper();
-                        break;
-                    */
+
                     default:
                         // This will currently be hit by GET-GET and POST-POST
                         break;
@@ -122,23 +117,6 @@ namespace com.gigagoga.rest
                     }
                     routeMatch++;
                 }
-                /*
-                for (int attrIndex = 0; attrIndex < attrs.Length && foundMatch == false; attrIndex++)
-                {
-                    if (attrs[attrIndex].HttpVerb == httpMethod)
-                    {
-                        UriTemplate uriTemplate = new UriTemplate(attrs[attrIndex].UriTemplate);
-                        UriTemplateMatch match = uriTemplate.Match(baseURI, context.Request.Url);
-                        if (match != null && !foundMatch)
-                        {
-                            context.Response.AppendHeader("X-ROUTE-MATCH-" + routeMatch, methods[methodIndex].Name);
-                            methods[methodIndex].Invoke(this, new object[] { context, match });
-                            foundMatch = true;
-                        }
-                    }
-                    routeMatch++;
-                }
-                */
             }
 
             if (!foundMatch)

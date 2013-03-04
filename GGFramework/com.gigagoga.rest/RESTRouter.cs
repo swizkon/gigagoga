@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Web;
 using System.Reflection;
 using System.ServiceModel.Web;
+using System.Diagnostics;
 
 namespace com.gigagoga.rest
 {
@@ -12,6 +13,18 @@ namespace com.gigagoga.rest
     [Obfuscation()]
     public abstract class RESTRouter : IHttpHandler
     {
+        private static TraceLevel _debug = TraceLevel.Off;
+
+        /// <summary>
+        /// Setup of the class.
+        /// 
+        /// </summary>
+        /// <param name="debug">Set to Verbose for performance debug data, Info for handler details</param>
+        public static void InitConfig(TraceLevel debug)
+        {
+            RESTRouter._debug = debug;
+        }
+
         /// <summary>
         /// Ctor
         /// </summary>
@@ -36,6 +49,11 @@ namespace com.gigagoga.rest
         /// <param name="context"></param>
         public void ProcessRequest(HttpContext context)
         {
+            if (RESTRouter._debug == TraceLevel.Verbose)
+            {
+                context.Response.AppendHeader("X-RESTRouter-ProcessRequest-Begin", Environment.TickCount.ToString());
+            }
+
             context.Response.ExpiresAbsolute = DateTime.Now.AddDays(-10);
 
             // ARG!!! Use the FilePath to enable all extensions...
@@ -87,7 +105,10 @@ namespace com.gigagoga.rest
                 }
             }
 
-            context.Response.AppendHeader("X-HTTP-Method", httpMethod.ToString());
+            if (RESTRouter._debug == TraceLevel.Verbose)
+            {
+                context.Response.AppendHeader("X-HTTP-Method", httpMethod.ToString());
+            }
 
             bool foundMatch = false;
             int routeMatch = 0;
@@ -110,7 +131,10 @@ namespace com.gigagoga.rest
                         UriTemplateMatch match = uriTemplate.Match(baseURI, context.Request.Url);
                         if (match != null && !foundMatch)
                         {
-                            context.Response.AppendHeader("X-ROUTE-MATCH-" + routeMatch, methods[methodIndex].Name);
+                            if (RESTRouter._debug >= TraceLevel.Info)
+                            {
+                                context.Response.AppendHeader("X-ROUTE-MATCH-" + routeMatch, methods[methodIndex].Name);
+                            }
                             methods[methodIndex].Invoke(this, new object[] { context, match });
                             foundMatch = true;
                         }
@@ -122,6 +146,11 @@ namespace com.gigagoga.rest
             if (!foundMatch)
             {
                 DefaultMethod(context);
+            }
+
+            if (RESTRouter._debug == TraceLevel.Verbose)
+            {
+                context.Response.AppendHeader("X-RESTRouter-ProcessRequest-End", Environment.TickCount.ToString());
             }
         }
 
@@ -138,12 +167,10 @@ namespace com.gigagoga.rest
 
         /// <summary>
         /// Outputs a HTML or JSON representation of all methods that are REST:y
-        /// 
         /// </summary>
         /// <param name="context"></param>
         protected void ServiceDiscovery(HttpContext context)
         {
-            IDictionary<String, String> resources = new SortedDictionary<String, String>();
 
             // Reflect this type and check for WebInvoke attributes which UriTemplate matches URI.
             MethodInfo[] methods = this.GetType().GetMethods(); // (BindingFlags.Instance | BindingFlags.DeclaredOnly); //  | BindingFlags.NonPublic
@@ -163,7 +190,9 @@ namespace com.gigagoga.rest
                         );
                 }
             }
+
             /*
+            IDictionary<String, String> resources = new SortedDictionary<String, String>();
             using (IEnumerator<KeyValuePair<String, String>> resource = resources.GetEnumerator())
             {
                 while (resource.MoveNext())
@@ -174,6 +203,7 @@ namespace com.gigagoga.rest
                 }
             }
             */
+
         }
     }
 }

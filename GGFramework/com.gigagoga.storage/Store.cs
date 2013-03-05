@@ -340,6 +340,7 @@ namespace com.gigagoga.storage
             return this.typeOfStore;
         }
 
+        /*
         public TReadable ReadFirstOrDefault<TReadable>(StoreQueryParam param1) where TReadable : IReadable, new()
         {
             return ReadFirstOrDefault<TReadable>(param1, null, null);
@@ -354,9 +355,14 @@ namespace com.gigagoga.storage
             return ReadFirstOrDefault<TReadable>(
                 StoreQuery.QueryFor<TReadable>(this, 
                 new StoreQueryParam[] { param1, param2, param3 }));
-            /*
-            return ReadFirstOrDefault<TReadable>(new StoreQueryParam[] { param1, param2, param3 });
-            */
+        }
+        */
+
+        public TReadable ReadFirstOrDefault<TReadable>(StoreQueryParam[] matchAll) where TReadable : IReadable, new()
+        {
+            return ReadFirstOrDefault<TReadable>(
+                    StoreQuery.QueryFor<TReadable>(this, matchAll)
+                );
         }
 
         /*
@@ -450,6 +456,68 @@ namespace com.gigagoga.storage
                 using (IDbCommand command = (store as IDbConnection).CreateCommand())
                 {
                     command.CommandText = query;
+                    using (IDataReader dr = command.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            TReadable current = new TReadable();
+                            current.InitFromObject(fromDataReader(dr));
+                            ts.Add(current);
+                        }
+                    }
+                }
+            }
+            return ts;
+        }
+
+
+        public List<TReadable> Read<TReadable>(String query, IDictionary<String, Object> parameters) where TReadable : IReadable, new()
+        {
+            List<TReadable> ts = new List<TReadable>();
+            // Select every row that matches...
+            if (store is IDbConnection)
+            {
+                using (IDbCommand command = (store as IDbConnection).CreateCommand())
+                {
+                    command.CommandText = query;
+                    // Add every param
+                    foreach (KeyValuePair<String, Object> p in parameters)
+                    {
+                        IDbDataParameter parameter = command.CreateParameter();
+                        parameter.ParameterName = p.Key;
+                        parameter.Value = p.Value;
+                        command.Parameters.Add(parameter);
+                    }
+
+                    using (IDataReader dr = command.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            TReadable current = new TReadable();
+                            current.InitFromObject(fromDataReader(dr));
+                            ts.Add(current);
+                        }
+                    }
+                }
+            }
+            return ts;
+        }
+
+        public List<TReadable> Read<TReadable>(String query, params IDbDataParameter[] parameters) where TReadable : IReadable, new()
+        {
+            List<TReadable> ts = new List<TReadable>();
+            // Select every row that matches...
+            if (store is IDbConnection)
+            {
+                using (IDbCommand command = (store as IDbConnection).CreateCommand())
+                {
+                    command.CommandText = query;
+                    // Add every param
+                    foreach (IDbDataParameter p in parameters)
+                    {
+                        command.Parameters.Add(p);
+                    }
+
                     using (IDataReader dr = command.ExecuteReader())
                     {
                         while (dr.Read())

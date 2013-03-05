@@ -27,14 +27,14 @@ namespace com.gigagoga.storage
 
         public static StoreQuery QueryFor<TReadable>(Store store) where TReadable : IReadable, new()
         {
-            StoreQuery storeQ = new StoreQuery(store.getTypeOfStore(), typeof(TReadable));
+            StoreQuery storeQ = new StoreQuery(store.getStoreType(), typeof(TReadable));
             // storeQ.type = typeof(T);
             return storeQ;
         }
 
         public static StoreQuery QueryFor<TReadable>(Store store, params StoreQueryParam[] matchAll) where TReadable : IReadable, new()
         {
-            StoreQuery storeQ = new StoreQuery(store.getTypeOfStore(), typeof(TReadable));
+            StoreQuery storeQ = new StoreQuery(store.getStoreType(), typeof(TReadable));
             foreach (StoreQueryParam p in matchAll)
             {
                 if (p != null)

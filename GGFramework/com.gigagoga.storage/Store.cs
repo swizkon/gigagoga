@@ -45,13 +45,13 @@ namespace com.gigagoga.storage
         }
         */
 
-        private StoreType typeOfStore = StoreType.None;
+        private StoreType storeType = StoreType.None;
         private object store = null;
         private bool isInternallyInitiated = false;
 
         public Store(XmlNode storeNode)
         {
-            this.typeOfStore = StoreType.XmlDocument;
+            this.storeType = StoreType.XmlDocument;
             this.store = storeNode;
         }
 
@@ -64,12 +64,12 @@ namespace com.gigagoga.storage
 
             if (settings.ProviderName == "System.Data.SqlClient")
             {
-                this.typeOfStore = StoreType.SQLServer;
+                this.storeType = StoreType.SQLServer;
                 store = new SqlConnection(settings.ConnectionString);
             }
             else if (settings.ProviderName == "System.Data.Odbc")
             {
-                this.typeOfStore = StoreType.MySQL;
+                this.storeType = StoreType.MySQL;
                 store = new OdbcConnection(settings.ConnectionString);
             }
             isInternallyInitiated = true;
@@ -85,11 +85,11 @@ namespace com.gigagoga.storage
             this.store = connection;
             if (connection is SqlConnection)
             {
-                this.typeOfStore = StoreType.SQLServer;
+                this.storeType = StoreType.SQLServer;
             }
             else if (connection is OdbcConnection && connection.ConnectionString != null && connection.ConnectionString.ToLower().Contains("mysql"))
             {
-                this.typeOfStore = StoreType.MySQL;
+                this.storeType = StoreType.MySQL;
             }
         }
 
@@ -131,7 +131,7 @@ namespace com.gigagoga.storage
                             if (iterator.Current.Value != null)
                             {
                                 fields += ',' + iterator.Current.Key;
-                                values += ',' + ((typeOfStore == StoreType.SQLServer) ? "@" + iterator.Current.Key : "?");
+                                values += ',' + ((this.storeType == StoreType.SQLServer) ? "@" + iterator.Current.Key : "?");
 
                                 IDataParameter parameter = command.CreateParameter();
                                 parameter.ParameterName = "@" + iterator.Current.Key;
@@ -152,9 +152,9 @@ namespace com.gigagoga.storage
                         object scalar = new object();
                         try
                         {
-                            command.CommandText = (this.typeOfStore == StoreType.SQLServer) ? "SELECT @@IDENTITY" : "SELECT LAST_INSERT_ID()";
+                            command.CommandText = (this.storeType == StoreType.SQLServer) ? "SELECT @@IDENTITY" : "SELECT LAST_INSERT_ID()";
                             scalar = command.ExecuteScalar();
-                            if (typeOfStore == StoreType.MySQL)
+                            if (this.storeType == StoreType.MySQL)
                             {
                                 newid = Convert.ToInt64(scalar);
                             }
@@ -267,7 +267,7 @@ namespace com.gigagoga.storage
                             if (iterator.Current.Value != null)
                             {
                                 values += iterator.Current.Key + '='
-                                    + ((typeOfStore == StoreType.SQLServer) ? "@" + iterator.Current.Key : "?")
+                                    + ((this.storeType == StoreType.SQLServer) ? "@" + iterator.Current.Key : "?")
                                     + ',';
 
                                 IDataParameter parameter = command.CreateParameter();
@@ -335,9 +335,9 @@ namespace com.gigagoga.storage
         }
 
 
-        internal StoreType getTypeOfStore()
+        internal StoreType getStoreType()
         {
-            return this.typeOfStore;
+            return this.storeType;
         }
 
         /*

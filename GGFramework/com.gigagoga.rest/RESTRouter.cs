@@ -4,6 +4,7 @@ using System.Web;
 using System.Reflection;
 using System.ServiceModel.Web;
 using System.Diagnostics;
+using System.Security.Principal;
 
 namespace com.gigagoga.rest
 {
@@ -36,7 +37,7 @@ namespace com.gigagoga.rest
         }
 
         /// <summary>
-        /// Interface property fro iHttpHandler.
+        /// Interface property from iHttpHandler.
         /// </summary>
         public abstract bool IsReusable
         {
@@ -163,6 +164,25 @@ namespace com.gigagoga.rest
         {
             // Default when no other methiod matches...
             context.Response.Write( this.GetType().FullName + " No match and no DefaultMethod for " + context.Request.RawUrl);
+        }
+
+
+        /// <summary>
+        /// Virtual method to be able to extend principal.
+        /// Returns "Guest" identity with no roles.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="match"></param>
+        /// <returns></returns>
+        public virtual IPrincipal GetPrincipal(HttpContext context, UriTemplateMatch match)
+        {
+            // using System.Security.Permissions;
+            // using System.Security.Principal;
+
+            GenericIdentity gi = new GenericIdentity("Guest");
+            GenericPrincipal genPrincipal = new GenericPrincipal(gi, new string[]{});
+            
+            return genPrincipal;
         }
 
         /// <summary>

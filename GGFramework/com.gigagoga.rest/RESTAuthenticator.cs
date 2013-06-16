@@ -50,6 +50,7 @@ namespace com.gigagoga.rest
         /// <summary>
         /// Perform validation using all QS or form params and load 
         /// APIKEY etc from the headers collection.
+        /// Check this class next year..
         /// </summary>
         /// <param name="request"></param>
         /// <param name="allowedHttpMethods"></param>

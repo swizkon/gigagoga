@@ -203,9 +203,9 @@ namespace com.gigagoga.rest
                 for (int attrIndex = 0; attrIndex < attrs.Length; attrIndex++)
                 {
                     context.Response.Write(
-                        String.Format("<div><code>{0}</code> <code>{1}</code><p>{2}</p></div>\r"
-                        , attrs[attrIndex].UriTemplate
+                        String.Format("<div><code class=\"verb\">{0}</code> <code class=\"template\">{1}</code><p>{2}</p></div>\r"
                         , attrs[attrIndex].HttpVerb.ToString()
+                        , attrs[attrIndex].UriTemplate
                         , attrs[attrIndex].Description)
                         );
                 }

@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Reflection;
 
-/*
 namespace com.gigagoga.rest
 {
     /// <summary>
     /// Summary description for RESTInvokeAttribute
     /// </summary>
     [Obfuscation()]
-    [Obsolete("Use RESTMethod attribute instead", true)]
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-    public class RESTInvokeAttribute : Attribute
+    public class RESTMethodAttribute : Attribute
     {
         private HttpVerbs httpVerb;
         private string uriTemplate;
@@ -47,7 +45,7 @@ namespace com.gigagoga.rest
         /// <summary>
         /// CTor
         /// </summary>
-        public RESTInvokeAttribute()
+        public RESTMethodAttribute()
         {
             //
             // TODO: Add constructor logic here
@@ -59,7 +57,7 @@ namespace com.gigagoga.rest
         /// </summary>
         /// <param name="httpVerb"></param>
         /// <param name="uriTemplate"></param>
-        public RESTInvokeAttribute(HttpVerbs httpVerb, String uriTemplate)
+        public RESTMethodAttribute(HttpVerbs httpVerb, String uriTemplate)
         {
             this.httpVerb = httpVerb;
             this.uriTemplate = uriTemplate;
@@ -71,7 +69,7 @@ namespace com.gigagoga.rest
         /// <param name="httpVerb"></param>
         /// <param name="uriTemplate"></param>
         /// <param name="description"></param>
-        public RESTInvokeAttribute(HttpVerbs httpVerb, String uriTemplate, String description)
+        public RESTMethodAttribute(HttpVerbs httpVerb, String uriTemplate, String description)
         {
             this.httpVerb = httpVerb;
             this.uriTemplate = uriTemplate;
@@ -80,4 +78,3 @@ namespace com.gigagoga.rest
 
     }
 }
-*/

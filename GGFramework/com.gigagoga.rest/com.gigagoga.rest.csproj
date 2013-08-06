@@ -82,6 +82,7 @@
     <Compile Include="RESTHost.cs" />
     <Compile Include="RESTInvokeAttribute.cs" />
     <Compile Include="RESTKeyManager.cs" />
+    <Compile Include="RESTMethodAttribute.cs" />
     <Compile Include="RESTRequest.cs" />
     <Compile Include="RESTResult.cs" />
     <Compile Include="RESTRouter.cs">

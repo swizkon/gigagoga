@@ -120,15 +120,18 @@ namespace com.gigagoga.rest
             for (int methodIndex = 0; methodIndex < methods.Length && foundMatch == false; methodIndex++)
             {
                 // Get attributes
-                RESTInvokeAttribute[] attrs = methods[methodIndex].GetCustomAttributes(typeof(RESTInvokeAttribute), false) as RESTInvokeAttribute[];
+                // RESTInvokeAttribute[] attrs = methods[methodIndex].GetCustomAttributes(typeof(RESTInvokeAttribute), false) as RESTInvokeAttribute[];
+                RESTMethodAttribute[] attrs = methods[methodIndex].GetCustomAttributes(typeof(RESTMethodAttribute), false) as RESTMethodAttribute[];
 
-                List<RESTInvokeAttribute> attrsList = new List<RESTInvokeAttribute>(attrs);
+                // List<RESTInvokeAttribute> attrsList = new List<RESTInvokeAttribute>(attrs);
+                List<RESTMethodAttribute> attrsList = new List<RESTMethodAttribute>(attrs);
 
-                foreach (RESTInvokeAttribute invoke in attrsList)
+                // foreach (RESTInvokeAttribute invoke in attrsList)
+                foreach (RESTMethodAttribute restMethod in attrsList)
                 {
-                    if (invoke.HttpVerb == httpMethod)
+                    if (restMethod.HttpVerb == httpMethod)
                     {
-                        UriTemplate uriTemplate = new UriTemplate(invoke.UriTemplate);
+                        UriTemplate uriTemplate = new UriTemplate(restMethod.UriTemplate);
                         UriTemplateMatch match = uriTemplate.Match(baseURI, context.Request.Url);
                         if (match != null && !foundMatch)
                         {
@@ -198,7 +201,8 @@ namespace com.gigagoga.rest
             for (int methodIndex = 0; methodIndex < methods.Length; methodIndex++)
             {
                 // Get attributes
-                RESTInvokeAttribute[] attrs = methods[methodIndex].GetCustomAttributes(typeof(RESTInvokeAttribute), false) as RESTInvokeAttribute[];
+                // RESTInvokeAttribute[] attrs = methods[methodIndex].GetCustomAttributes(typeof(RESTInvokeAttribute), false) as RESTInvokeAttribute[];
+                RESTMethodAttribute[] attrs = methods[methodIndex].GetCustomAttributes(typeof(RESTMethodAttribute), false) as RESTMethodAttribute[];
 
                 for (int attrIndex = 0; attrIndex < attrs.Length; attrIndex++)
                 {
